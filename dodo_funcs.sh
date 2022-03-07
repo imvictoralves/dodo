@@ -31,23 +31,13 @@ _list(){
 _main(){
     local cmd=$1
 
-    # I assume users want to add a new item when first argument contains the word
-    # followed by more words. But if their args is just the word "list" then I
-    # assume users want to see a list of added todos.
-    if [ $cmd = "list" ] && [ ! -z $2 ]; then
-        cmd="new"
-    fi
-
-    # if args are empty, expect the list of todos
+    # list todos by default. if args are empty, expect the list of todos.
     if [ -z "$cmd" ]; then
-        cmd="list"
+        cmd="-list"
     fi
 
     case $cmd in 
-        n|new)
-            _new $@
-        ;;
-        l|list)
+        -list)
             _list
         ;;
         *)

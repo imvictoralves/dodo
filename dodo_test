@@ -24,7 +24,7 @@ _dodo(){
 }
 
 _test_show_error_when_list_todo_without_file(){
-    _assert "$(_dodo list)" = "$(_err_cannot_find_todos_file)" 
+    _assert "$(_dodo -list)" = "$(_err_cannot_find_todos_file)" 
 }
 
 _test_new_entry_creates_todo_file(){
@@ -45,22 +45,22 @@ _test_new_entries_are_saved(){
        _dodo "$i"
 
        buf="$buf$i"
-       _assert "$buf" = "$(_dodo list)"
+       _assert "$buf" = "$(_dodo -list)"
     done
 }
 
-_test_can_add_item_starting_with_word_list(){
-    _clean_fixtures
-    local item="list all my favority movies"
-    _assert -z $(_dodo $item)
-    _assert "$item" = "$(_dodo list)"
+_test_list_is_default(){
+  _clean_fixtures
+  local item="new entry"
+  _dodo $item
+  _assert "$item" = "$(_dodo)" 
 }
 
 _clean_fixtures
 _test_show_error_when_list_todo_without_file
 _test_new_entry_creates_todo_file
 _test_new_entries_are_saved
-_test_can_add_item_starting_with_word_list
+_test_list_is_default
 _clean_fixtures
 
 echo "" # new line at the end
