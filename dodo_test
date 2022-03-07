@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# import dodo function
+. dodo_funcs.sh
+
+TODOFILE=".dodo-todos-test-only"
+
+_assert(){
+    test "$@" && \
+        echo -n "✔︎" && return 0 || \
+        echo -e "✕\nFAIL: \"${FUNCNAME[1]}\" has failed. \n      False assertion: $@." 
+    exit 1
+}
+
+_clean_fixtures(){
+    rm -f $TODOFILE
+}
+
+_dodo(){
+    local main=$(_main $@)
+
+    # remove new line to assert easily
+    echo -n "${main//[$'\t\r\n']}" 
+}
+
+_test_show_error_when_list_todo_without_file(){
+    _assert "$(_dodo list)" = "$(_err_cannot_find_todos_file)" 
+}
+
+_test_new_entry_creates_todo_file(){
+    _clean_fixtures
+    _assert \! -f $TODOFILE 
+    _dodo my first todo item
+    _assert -f $TODOFILE
+    _clean_fixtures
+}
+
+_test_new_entries_are_saved(){
+    _clean_fixtures
+    declare -a entries=("entry one" "entry two" "entry three")
+
+    local buf=""
+    for i in "${entries[@]}"
+    do
+       _dodo "$i"
+
+       buf="$buf$i"
+       _assert "$buf" = "$(_dodo list)"
+    done
+}
+
+_test_can_add_item_starting_with_word_list(){
+    _clean_fixtures
+    local item="list all my favority movies"
+    _assert -z $(_dodo $item)
+    _assert "$item" = "$(_dodo list)"
+}
+
+_clean_fixtures
+_test_show_error_when_list_todo_without_file
+_test_new_entry_creates_todo_file
+_test_new_entries_are_saved
+_test_can_add_item_starting_with_word_list
+_clean_fixtures
+
+echo "" # new line at the end

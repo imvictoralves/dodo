@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# import dodo function
+. dodo_funcs.sh
+
+_main $@
