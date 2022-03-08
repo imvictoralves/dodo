@@ -63,7 +63,7 @@ _test_delete_an_item(){
   _dodo $itemOne
   _dodo $itemTwo
   _assert "$itemOne$itemTwo" = "$(_dodo -list)" 
-  _dodo -delete 1
+  _dodo -delete 2 # want to delete the second item and not index number two
   _assert "$itemOne" = "$(_dodo -list)" 
 }
 

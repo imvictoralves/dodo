@@ -30,7 +30,7 @@ _list(){
 
 _delete(){
     cat $TODOFILE | jq \
-      --argjson idx "$1" \
+      --argjson idx "$(($1-1))" \
       'del(.todos[$idx])' > "${TODOFILE}_tmp" 
 
     # There is this issue with the buffer getting the content from TODOFILE
