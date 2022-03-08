@@ -28,6 +28,17 @@ _list(){
     cat $TODOFILE | jq -j '.todos[].title + "\n"'
 }
 
+_delete(){
+    cat $TODOFILE | jq \
+      --argjson idx "$1" \
+      'del(.todos[$idx])' > "${TODOFILE}_tmp" 
+
+    # There is this issue with the buffer getting the content from TODOFILE
+    # passing through the pipe and push the update inside file again. CRAZY STUFF!
+    # Here goes a work around with a tmp file.
+    mv "${TODOFILE}_tmp" $TODOFILE
+}
+
 _main(){
     local cmd=$1
 
@@ -39,6 +50,9 @@ _main(){
     case $cmd in 
         -list)
             _list
+        ;;
+        -delete)
+            _delete $2
         ;;
         *)
             _new $@

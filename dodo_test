@@ -56,11 +56,23 @@ _test_list_is_default(){
   _assert "$item" = "$(_dodo)" 
 }
 
+_test_delete_an_item(){
+  _clean_fixtures
+  local itemOne="entry n. 1" 
+  local itemTwo="entry n. 2" 
+  _dodo $itemOne
+  _dodo $itemTwo
+  _assert "$itemOne$itemTwo" = "$(_dodo -list)" 
+  _dodo -delete 1
+  _assert "$itemOne" = "$(_dodo -list)" 
+}
+
 _clean_fixtures
 _test_show_error_when_list_todo_without_file
 _test_new_entry_creates_todo_file
 _test_new_entries_are_saved
 _test_list_is_default
+_test_delete_an_item
 _clean_fixtures
 
 echo "" # new line at the end
