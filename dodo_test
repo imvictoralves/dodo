@@ -39,7 +39,7 @@ _test_new_entries_are_saved(){
     _clean_fixtures
     declare -a entries=("entry one" "entry two" "entry three")
 
-    local status="PENDING | "
+    local status="$StatusPending | "
     local buf=""
     for i in "${entries[@]}"
     do
@@ -54,12 +54,12 @@ _test_list_is_default(){
   _clean_fixtures
   local item="new entry"
   _dodo $item
-  _assert "PENDING | $item" = "$(_dodo)" 
+  _assert "$StatusPending | $item" = "$(_dodo)" 
 }
 
 _test_delete_an_item(){
   _clean_fixtures
-  local status="PENDING | "
+  local status="$StatusPending | "
   local itemOne="entry n. 1" 
   local itemTwo="entry n. 2" 
   _dodo $itemOne
@@ -72,14 +72,14 @@ _test_delete_an_item(){
 _test_default_status_is_pending(){
   _clean_fixtures
   _dodo A new item
-  _assert "PENDING" = "$(_dodo -list | grep -oi pending)" 
+  _assert $StatusPending = "$(_dodo -list | grep -oi pending)" 
 }
 
 _test_set_status_to_done(){
   _clean_fixtures
   _dodo this new item
   _dodo -done 1
-  _assert "DONE" = "$(_dodo -list | grep -oi done)" 
+  _assert $StatusDone = "$(_dodo -list | grep -oi done)" 
 }
 
 _clean_fixtures

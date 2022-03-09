@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+StatusPending="PENDING"
+StatusDone="DONE"
+
 if [ -z "$TODOFILE" ]; then
     TODOFILE=".dodo-todos"
 fi
@@ -16,7 +19,8 @@ _new(){
     cat $TODOFILE | jq \
         --arg dt "$(date +%Y-%m-%d)" \
         --arg tt "$(echo $@)" \
-        '.todos += [{date: $dt, title: $tt, status: "PENDING"}]' > $TODOFILE
+        --arg st "$StatusPending" \
+        '.todos += [{date: $dt, title: $tt, status: $st}]' > $TODOFILE
 }
 
 _list(){
@@ -42,7 +46,8 @@ _delete(){
 _done(){
     cat $TODOFILE | jq -j \
       --argjson idx "$(($1-1))" \
-      '(.todos[$idx].status |= "DONE")' > "${TODOFILE}_tmp" 
+      --arg st "$StatusDone" \
+      '(.todos[$idx].status |= $st)' > "${TODOFILE}_tmp" 
     mv "${TODOFILE}_tmp" $TODOFILE
 }
 
