@@ -16,7 +16,7 @@ _new(){
     cat $TODOFILE | jq \
         --arg dt "$(date +%Y-%m-%d)" \
         --arg tt "$(echo $@)" \
-        '.todos += [{date: $dt, title: $tt}]' > $TODOFILE
+        '.todos += [{date: $dt, title: $tt, status: "PENDING"}]' > $TODOFILE
 }
 
 _list(){
@@ -25,7 +25,7 @@ _list(){
         return 1
     fi
 
-    cat $TODOFILE | jq -j '.todos[].title + "\n"'
+    cat $TODOFILE | jq -j '.todos[]| "\(.status) | \(.title)\n"'
 }
 
 _delete(){
@@ -36,6 +36,13 @@ _delete(){
     # There is this issue with the buffer getting the content from TODOFILE
     # passing through the pipe and push the update inside file again. CRAZY STUFF!
     # Here goes a work around with a tmp file.
+    mv "${TODOFILE}_tmp" $TODOFILE
+}
+
+_done(){
+    cat $TODOFILE | jq -j \
+      --argjson idx "$(($1-1))" \
+      '(.todos[$idx].status |= "DONE")' > "${TODOFILE}_tmp" 
     mv "${TODOFILE}_tmp" $TODOFILE
 }
 
@@ -50,6 +57,9 @@ _main(){
     case $cmd in 
         -list)
             _list
+        ;;
+        -done)
+            _done $2
         ;;
         -delete)
             _delete $2

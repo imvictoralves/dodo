@@ -1,8 +1,14 @@
 {
   "todos": [
     {
-      "date": "2022-03-07",
-      "title": "this is a new item"
+      "date": "2022-03-09",
+      "title": "This is a new item",
+      "status": "PENDING"
+    },
+    {
+      "date": "2022-03-09",
+      "title": "yet another item",
+      "status": "PENDING"
     }
   ]
 }

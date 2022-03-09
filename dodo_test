@@ -39,12 +39,13 @@ _test_new_entries_are_saved(){
     _clean_fixtures
     declare -a entries=("entry one" "entry two" "entry three")
 
+    local status="PENDING | "
     local buf=""
     for i in "${entries[@]}"
     do
        _dodo "$i"
 
-       buf="$buf$i"
+       buf="$buf$status$i"
        _assert "$buf" = "$(_dodo -list)"
     done
 }
@@ -53,18 +54,32 @@ _test_list_is_default(){
   _clean_fixtures
   local item="new entry"
   _dodo $item
-  _assert "$item" = "$(_dodo)" 
+  _assert "PENDING | $item" = "$(_dodo)" 
 }
 
 _test_delete_an_item(){
   _clean_fixtures
+  local status="PENDING | "
   local itemOne="entry n. 1" 
   local itemTwo="entry n. 2" 
   _dodo $itemOne
   _dodo $itemTwo
-  _assert "$itemOne$itemTwo" = "$(_dodo -list)" 
+  _assert "$status$itemOne$status$itemTwo" = "$(_dodo -list)" 
   _dodo -delete 2 # want to delete the second item and not index number two
-  _assert "$itemOne" = "$(_dodo -list)" 
+  _assert "$status$itemOne" = "$(_dodo -list)" 
+}
+
+_test_default_status_is_pending(){
+  _clean_fixtures
+  _dodo A new item
+  _assert "PENDING" = "$(_dodo -list | grep -oi pending)" 
+}
+
+_test_set_status_to_done(){
+  _clean_fixtures
+  _dodo this new item
+  _dodo -done 1
+  _assert "DONE" = "$(_dodo -list | grep -oi done)" 
 }
 
 _clean_fixtures
@@ -73,6 +88,8 @@ _test_new_entry_creates_todo_file
 _test_new_entries_are_saved
 _test_list_is_default
 _test_delete_an_item
+_test_default_status_is_pending
+_test_set_status_to_done
 _clean_fixtures
 
 echo "" # new line at the end
